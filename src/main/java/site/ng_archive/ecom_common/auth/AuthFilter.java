@@ -71,7 +71,7 @@ public class AuthFilter implements WebFilter {
 
     private ErrorResponse getErrorResponse(RuntimeException ex) {
         String errorCode = getErrorCode(ex);
-        return new ErrorResponse(errorCode, errorMessageUtil.getErrorMessage(errorCode));
+        return errorMessageUtil.getErrorResult(errorCode);
     }
 
     private static String getErrorCode(RuntimeException ex) {

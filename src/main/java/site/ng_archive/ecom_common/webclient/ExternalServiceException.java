@@ -1,14 +1,9 @@
-package site.ng_archive.ecom_common.exception;
+package site.ng_archive.ecom_common.webclient;
 
 import lombok.Getter;
 
 public class ExternalServiceException extends RuntimeException {
-
-    @Getter
-    private String code;
-
     public ExternalServiceException(String code) {
         super(code);
-        this.code = code;
     }
 }

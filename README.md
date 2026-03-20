@@ -129,3 +129,16 @@ public Mono<ReadMemberResponse> readMember(@LoginUser UserContext user, @PathVar
         ...
 }
 ```
+
+### 4) properties 에 `token.jwt.secret` 추가
+auth 기능으로 인하여 properties 에 `token.jwt.secret` 가 필수로 존재해야 합니다.  
+```properties
+jasypt.encryptor.password=${ENCRYPTION_KEY}
+jasypt.encryptor.algorithm=PBEWithHMACSHA512AndAES_256
+jasypt.encryptor.iv-generator-classname=org.jasypt.iv.RandomIvGenerator
+jasypt.encryptor.key-obtention-iterations=1000
+
+token.jwt.secret=ENC(RFTbdDKIF/+kFhFZ2sKkwiC586suCuty6dZVKzggKtzQPwR6k02q6jFUKPQG35+a7l2dIJA8jQfr95OkMVYdfg==)
+```
+
+`jasypt.encryptor.password`는 [CommonTest.java](src/test/java/site/ng_archive/ecom_common/CommonTest.java) 의 암호화 함수를 이용하세요.

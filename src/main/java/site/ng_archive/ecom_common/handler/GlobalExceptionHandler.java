@@ -1,4 +1,4 @@
-package site.ng_archive.ecom_common.exception;
+package site.ng_archive.ecom_common.handler;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,6 +13,9 @@ import site.ng_archive.ecom_common.auth.exception.ForbiddenException;
 import site.ng_archive.ecom_common.auth.exception.LoginFailException;
 import site.ng_archive.ecom_common.error.ErrorMessageUtil;
 import site.ng_archive.ecom_common.error.ErrorResponse;
+import site.ng_archive.ecom_common.webclient.ExternalService4xxException;
+import site.ng_archive.ecom_common.webclient.ExternalService5xxException;
+import site.ng_archive.ecom_common.webclient.ExternalServiceException;
 
 import java.util.List;
 
@@ -29,14 +32,10 @@ public class GlobalExceptionHandler {
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
         if (fieldErrors.isEmpty()) {
             String errorCode = "error.input.unknown";
-            return errorMessageUtil.getErrorResult(errorCode, errorMessageUtil.getErrorMessage(errorCode));
+            return errorMessageUtil.getErrorResult(errorCode);
         }
         FieldError error = fieldErrors.getFirst();
-
-        String code = error.getDefaultMessage();
-        String message = errorMessageUtil.getErrorMessage(code, error.getArguments());
-
-        return errorMessageUtil.getErrorResult(code, message);
+        return errorMessageUtil.getErrorResult(error.getDefaultMessage(), error.getArguments());
     }
 
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
@@ -46,7 +45,7 @@ public class GlobalExceptionHandler {
         if (errorCode == null || errorCode.isBlank()) {
             errorCode = "error.unsupported.operation";
         }
-        return errorMessageUtil.getErrorResult(errorCode, errorMessageUtil.getErrorMessage(errorCode));
+        return errorMessageUtil.getErrorResult(errorCode);
     }
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -102,7 +101,7 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleRuntimeException(RuntimeException ex) {
         log.error("handleRuntimeException: ", ex);
         String errorCode = "error.runtime";
-        return new ErrorResponse(errorCode, errorMessageUtil.getErrorMessage(errorCode));
+        return errorMessageUtil.getErrorResult(errorCode);
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -110,6 +109,6 @@ public class GlobalExceptionHandler {
     public ErrorResponse handleGeneralException(Exception ex) {
         log.error("handleGeneralException: ", ex);
         String errorCode = "error.internal.server";
-        return new ErrorResponse(errorCode, errorMessageUtil.getErrorMessage(errorCode));
+        return errorMessageUtil.getErrorResult(errorCode);
     }
 }

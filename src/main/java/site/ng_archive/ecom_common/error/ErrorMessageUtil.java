@@ -14,7 +14,7 @@ public class ErrorMessageUtil {
     private final MessageSource ms;
     private static final String EXCEPTION_ERROR_CODE = "error";
 
-    public String getErrorCode(Exception e) {
+    private String getErrorCode(Exception e) {
         String errorCode = e.getMessage();
         try {
             ms.getMessage(errorCode, null, Locale.KOREA);
@@ -24,7 +24,7 @@ public class ErrorMessageUtil {
         return errorCode;
     }
 
-    public String getErrorMessage(String errorCode) {
+    private String getErrorMessage(String errorCode) {
         try {
             return ms.getMessage(errorCode, null, Locale.KOREA);
         } catch (Exception ex) {
@@ -32,7 +32,7 @@ public class ErrorMessageUtil {
         }
     }
 
-    public String getErrorMessage(String errorCode, Object[] args) {
+    private String getErrorMessage(String errorCode, Object[] args) {
         Object[] reversed = null;
 
         if (args != null && args.length > 1) {
@@ -46,6 +46,10 @@ public class ErrorMessageUtil {
         }
     }
 
+    public ErrorResponse getErrorResult(String errorCode) {
+        return new ErrorResponse(errorCode, getErrorMessage(errorCode));
+    }
+
     public ErrorResponse getErrorResult(String errorCode, String message) {
         return new ErrorResponse(errorCode, message);
     }
@@ -56,4 +60,7 @@ public class ErrorMessageUtil {
         return new ErrorResponse(code, message);
     }
 
+    public ErrorResponse getErrorResult(String errorCode, Object[] arguments) {
+        return new ErrorResponse(errorCode, getErrorMessage(errorCode, arguments));
+    }
 }

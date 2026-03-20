@@ -5,10 +5,7 @@ import org.springframework.http.HttpStatusCode;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 import site.ng_archive.ecom_common.error.ErrorResponse;
-import site.ng_archive.ecom_common.exception.EntityNotFoundException;
-import site.ng_archive.ecom_common.exception.ExternalService4xxException;
-import site.ng_archive.ecom_common.exception.ExternalService5xxException;
-import site.ng_archive.ecom_common.exception.ExternalServiceException;
+import site.ng_archive.ecom_common.handler.EntityNotFoundException;
 
 public class WebClientErrorHandler {
     public static Mono<? extends Throwable> handle(ClientResponse response) {
