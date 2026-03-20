@@ -91,6 +91,12 @@ public class GlobalExceptionHandler {
         return errorMessageUtil.getErrorResult(ex);
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ErrorResponse handleIllegalArgumentException(IllegalArgumentException ex) {
+        return errorMessageUtil.getErrorResult(ex);
+    }
+
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse handleRuntimeException(RuntimeException ex) {
