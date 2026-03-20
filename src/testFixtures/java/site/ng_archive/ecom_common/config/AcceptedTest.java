@@ -5,6 +5,8 @@ import com.epages.restdocs.apispec.ResourceSnippet;
 import com.epages.restdocs.apispec.ResourceSnippetParameters;
 import com.epages.restdocs.apispec.ResourceSnippetParametersBuilder;
 import com.epages.restdocs.apispec.WebTestClientRestDocumentationWrapper;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.restassured.module.webtestclient.RestAssuredWebTestClient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -13,7 +15,6 @@ import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDoc
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Import;
 import org.springframework.restdocs.RestDocumentationContextProvider;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.Constraint;
@@ -44,6 +45,9 @@ public abstract class AcceptedTest {
     protected RestDocsConfig restDocsConfig;
 
     private WebTestClient webTestClient;
+
+    @Autowired
+    private ObjectMapper objectMapper;
 
     @BeforeEach
     void setUp(ApplicationContext applicationContext, RestDocumentationContextProvider provider) {
@@ -101,5 +105,14 @@ public abstract class AcceptedTest {
         System.arraycopy(snippets, 0, allSnippets, 1, snippets.length);
         return allSnippets;
     }
+
+    protected String toJson(Object dto) {
+        try {
+            return objectMapper.writeValueAsString(dto);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
 
 }

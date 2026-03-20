@@ -55,6 +55,7 @@ dependencies {
     testFixturesImplementation 'com.epages:restdocs-api-spec-webtestclient:0.17.1'
     testFixturesImplementation 'net.datafaker:datafaker:2.4.0'
     testFixturesImplementation 'io.projectreactor:reactor-test'
+    testFixturesImplementation 'com.fasterxml.jackson.core:jackson-databind'
 }
 
 tasks.named('test') {
