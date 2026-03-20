@@ -65,3 +65,67 @@ dependencies {
     testImplementation testFixtures('site.ng-archive:ecom-common')
 }
 ```
+
+### 2) 코드 수정
+
+Spring Application 에 `@EnableEcomCommon` 어노테이션을 달아줍니다.
+
+```java
+@EnableEcomCommon
+@SpringBootApplication
+public class EcomMemberApplication {
+    ...
+}
+```
+
+만약 테스트 코드 에서 빈 주입 오류가 발생하는경우 인텔리J에서 커스텀 어노테이션을 인식하지 못해 발생하는 문제입니다.  
+실행에는 문제가 없지만 설정을 변경하기 힘든 경우 아래와 같이 테스트 클래스에 추가하여 줍니다.
+
+```java
+@ContextConfiguration(classes = {EcomMemberApplication.class})
+class MemberControllerTest extends AcceptedTest {
+    
+    // 빨간줄 안뜸
+    @Autowired
+    private MemberService memberService;
+    
+    ...
+}
+```
+
+### 3) 인증/인가
+
+인증/인가가 필요한 경우 컨트롤러에 아래와 같이 `@RequireRoles` 어노테이션을 추가합니다.
+
+```java
+    @RequireRoles
+    @GetMapping("/member/{id}")
+    public Mono<ReadMemberResponse> readMember(@PathVariable Long id) {
+        ...
+    }
+```
+
+특정 권한이 필요한 경우 `@RequireRoles` 에 권한 인자를 추가합니다. 타입은 `String[]` 입니다.
+
+```java
+    @RequireRoles(roles = {Role.ROLES.USER, Role.ROLES.ADMIN})
+    @GetMapping("/member/{id}")
+    public Mono<ReadMemberResponse> readMember(@PathVariable Long id) {
+        ...
+    }
+```
+이 경우 로그인 한 사용자의 권한이 `USER` 와 `ADMIN` 둘 중 하나인 경우 허용됩니다.
+
+로그인 한 사용자의 정보를 컨트롤러 인자로 주입 받으려면 아래와 같이 `@LoginUser` 어노테이션을 사용하여 `UserContext` 타입을 주입받습니다.
+
+```java
+
+@RequireRoles
+@GetMapping("/member/{id}")
+public Mono<ReadMemberResponse> readMember(@LoginUser UserContext user, @PathVariable Long id) {
+    // 사용자 검증
+    return Mono.just(user)
+        .filter(u -> u.id().equals(id))
+        ...
+}
+```
