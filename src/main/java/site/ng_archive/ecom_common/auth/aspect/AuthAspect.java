@@ -58,7 +58,7 @@ public class AuthAspect {
         }
 
         // 3. 그 외 타입(일반 타입)은 예외 발생시켜 차단
-        throw new UnsupportedOperationException("error.not-implemented");
+        throw new UnsupportedOperationException("error.unsupported.operation");
     }
 
     private boolean validate(ContextView ctx, RequireRoles requireRoles) {
