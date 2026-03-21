@@ -97,6 +97,12 @@ public class GlobalExceptionHandler {
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ExceptionHandler(IllegalStateException.class)
+    public ErrorResponse handleIllegalStateException(IllegalStateException ex) {
+        return errorMessageUtil.getErrorResult(ex);
+    }
+
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse handleRuntimeException(RuntimeException ex) {
         log.error("handleRuntimeException: ", ex);

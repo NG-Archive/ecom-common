@@ -14,7 +14,7 @@ public class WebClientErrorHandler {
 
     public static Mono<? extends Throwable> handle(ClientResponse response) {
         return response.bodyToMono(ErrorResponse.class)
-                .switchIfEmpty(Mono.error(new IllegalStateException(EMPTY_RESPONSE_ERROR)))
+                .switchIfEmpty(Mono.defer(() -> Mono.error(new IllegalStateException(EMPTY_RESPONSE_ERROR))))
                 .onErrorMap(ex -> isExpectedEmptyResponseError(ex)
                     ? ex : new IllegalStateException(INVALID_RESPONSE_ERROR, ex))
                 .flatMap(body -> Mono.error(mapException(response.statusCode(), body)));
