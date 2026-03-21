@@ -13,18 +13,9 @@
 - 테스트 공통 설정 및 테스트 픽스처
 - REST Docs / API 스펙 문서화 보조
 
-## 프로젝트 정보
-
-- Java 21
-- Spring Boot 3.5.11
-- Reactive WebFlux 기반
-- Jakarta EE import 사용
-- Gradle 모듈
-- Lombok 사용
-
 ## 패키지명 안내 
 
-현재는 `site.ng_archive.ecom_common` 패키지를 사용합니다.
+`site.ng_archive.ecom_common` 패키지를 사용합니다.
 
 ## 빌드 산출물
 
@@ -78,8 +69,9 @@ public class EcomMemberApplication {
 }
 ```
 
-만약 테스트 코드 에서 빈 주입 오류가 발생하는경우 인텔리J에서 커스텀 어노테이션을 인식하지 못해 발생하는 문제입니다.  
+만약 테스트 코드 에서 빈 주입 오류가 발생하는경우 IntelliJ에서 커스텀 어노테이션을 인식하지 못해 발생하는 문제입니다.  
 실행에는 문제가 없지만 설정을 변경하기 힘든 경우 아래와 같이 테스트 클래스에 추가하여 줍니다.
+단 IntelliJ의 버전에 따라서 오류 발생이 없을 수 있습니다.
 
 ```java
 @ContextConfiguration(classes = {EcomMemberApplication.class})
@@ -131,7 +123,9 @@ public Mono<ReadMemberResponse> readMember(@LoginUser UserContext user, @PathVar
 ```
 
 ### 4) properties 에 `token.jwt.secret` 추가
-auth 기능으로 인하여 properties 에 `token.jwt.secret` 가 필수로 존재해야 합니다.  
+auth 기능으로 인하여 properties 에 `token.jwt.secret` 가 필수로 존재해야 합니다.
+
+properties 예시:
 ```properties
 jasypt.encryptor.password=${ENCRYPTION_KEY}
 jasypt.encryptor.algorithm=PBEWithHMACSHA512AndAES_256
@@ -140,5 +134,35 @@ jasypt.encryptor.key-obtention-iterations=1000
 
 token.jwt.secret=ENC(RFTbdDKIF/+kFhFZ2sKkwiC586suCuty6dZVKzggKtzQPwR6k02q6jFUKPQG35+a7l2dIJA8jQfr95OkMVYdfg==)
 ```
+`ENCRYPTION_KEY` 는 실행 시에 환경 변수로 주입받아야 합니다. 아래 중 하나와 같이 설정하세요.
 
-`jasypt.encryptor.password`는 [CommonTest.java](src/test/java/site/ng_archive/ecom_common/CommonTest.java) 의 암호화 함수를 이용하세요.
+* **IntelliJ IDEA에서 설정:**
+    - Run > Edit Configurations 메뉴 선택
+    - Environment variables 항목에 `ENCRYPTION_KEY=your_secret_key` 추가
+
+
+* **시스템 환경 변수로 설정 (Linux/Mac):**
+   ```bash
+   export ENCRYPTION_KEY=your_secret_key
+   ```
+
+`token.jwt.secret`는 암호화 값을 생성하기 위하여 [CommonTest.java](src/test/java/site/ng_archive/ecom_common/CommonTest.java) 의 암호화 함수를 이용하세요.
+
+### 5) message.properties 에 아래 항목 추가
+common 모듈 에서 사용하는 오류 메시지 생성을 위하여 `message.properties` 에 아래 항목이 필수로 포함되어야 합니다. 
+
+message.properties
+```properties
+error=오류가 발생했습니다.
+error.runtime=실행 중 오류가 발생했습니다.
+error.internal.server=서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
+error.input.unknown=입력값 오류가 발생했습니다.
+error.not-implemented=해당 기능은 현재 지원되지 않습니다.
+error.response.empty=응답 내용이 비어 있습니다.
+error.response.invalid=응답 내용이 올바른 형식이 아닙니다.
+token.expired=토큰이 만료되었습니다.
+token.invalid=토큰이 올바르지 않습니다.
+token.auth.failed=인증에 실패하였습니다.
+auth.unauthorized=로그인이 필요합니다.
+auth.forbidden=권한이 필요합니다.
+```

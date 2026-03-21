@@ -57,19 +57,19 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(ExternalService4xxException.class)
     public ErrorResponse handleExternalService4xxException(ExternalService4xxException ex) {
-        return errorMessageUtil.getErrorResult(ex);
+        return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ExternalService5xxException.class)
     public ErrorResponse handleExternalService5xxException(ExternalService5xxException ex) {
-        return errorMessageUtil.getErrorResult(ex);
+        return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
     }
 
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(ExternalServiceException.class)
     public ErrorResponse handleExternalServiceException(ExternalServiceException ex) {
-        return errorMessageUtil.getErrorResult(ex);
+        return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
     }
 
     @ResponseStatus(HttpStatus.FORBIDDEN)
