@@ -96,7 +96,7 @@ public class GlobalExceptionHandler {
         return errorMessageUtil.getErrorResult(ex);
     }
 
-    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(IllegalStateException.class)
     public ErrorResponse handleIllegalStateException(IllegalStateException ex) {
         return errorMessageUtil.getErrorResult(ex);
