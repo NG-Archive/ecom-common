@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.server.MissingRequestValueException;
 import site.ng_archive.ecom_common.auth.exception.AccessDeniedException;
 import site.ng_archive.ecom_common.auth.exception.ForbiddenException;
 import site.ng_archive.ecom_common.auth.exception.LoginFailException;
@@ -17,6 +18,7 @@ import site.ng_archive.ecom_common.webclient.ExternalService4xxException;
 import site.ng_archive.ecom_common.webclient.ExternalService5xxException;
 import site.ng_archive.ecom_common.webclient.ExternalServiceException;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Slf4j
@@ -29,13 +31,25 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(WebExchangeBindException.class)
     public ErrorResponse handleWebExchangeBindException(WebExchangeBindException ex) {
-        List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        if (fieldErrors.isEmpty()) {
-            String errorCode = "error.input.unknown";
-            return errorMessageUtil.getErrorResult(errorCode);
-        }
-        FieldError error = fieldErrors.getFirst();
-        return errorMessageUtil.getErrorResult(error.getDefaultMessage(), error.getArguments());
+        return ex.getBindingResult().getFieldErrors().stream()
+            .findFirst()
+            .map(error -> {
+                Object[] args = error.getArguments();
+                Object[] reversed = null;
+                if (args != null && args.length > 1) {
+                    Object[] copied = Arrays.copyOfRange(args, 1, args.length);
+                    reversed = Arrays.asList(copied).reversed().toArray();
+                }
+                return errorMessageUtil.getErrorResult(error.getDefaultMessage(), reversed);
+            })
+            .orElseGet(() -> errorMessageUtil.getErrorResult("error.input.unknown"));
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler(MissingRequestValueException.class)
+    public ErrorResponse handleMissingRequestValueException(MissingRequestValueException ex) {
+        Object[] args = new Object[]{ex.getLabel(), ex.getName()};
+        return errorMessageUtil.getErrorResult("error.missing.request", args);
     }
 
     @ResponseStatus(HttpStatus.NOT_IMPLEMENTED)
