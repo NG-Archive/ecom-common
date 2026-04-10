@@ -30,6 +30,10 @@ public class AuthAspect {
         // 1. Mono 타입인 경우
         if (Mono.class.isAssignableFrom(returnType)) {
             return Mono.deferContextual(ctx -> {
+                // 인증 정보 존재 여부 확인
+                if (!ctx.hasKey("userContext")) {
+                    return Mono.error(new AccessDeniedException("auth.unauthorized"));
+                }
                 // 권한 체크 먼저 실행
                 if (!validate(ctx, requireRoles)) {
                     return Mono.error(new ForbiddenException("auth.forbidden"));
@@ -46,6 +50,9 @@ public class AuthAspect {
         // 2. Flux 타입인 경우
         if (Flux.class.isAssignableFrom(returnType)) {
             return Flux.deferContextual(ctx -> {
+                if (!ctx.hasKey("userContext")) {
+                    return Mono.error(new AccessDeniedException("auth.unauthorized"));
+                }
                 if (!validate(ctx, requireRoles)) {
                     return Flux.error(new ForbiddenException("auth.forbidden"));
                 }
@@ -62,11 +69,6 @@ public class AuthAspect {
     }
 
     private boolean validate(ContextView ctx, RequireRoles requireRoles) {
-        // 인증 정보 존재 여부 확인
-        if (!ctx.hasKey("userContext")) {
-            throw new AccessDeniedException("auth.unauthorized");
-        }
-
         UserContext user = ctx.get("userContext");
         String[] requiredRoles = requireRoles.roles();
 
