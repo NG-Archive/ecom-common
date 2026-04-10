@@ -51,7 +51,7 @@ public class AuthAspect {
         if (Flux.class.isAssignableFrom(returnType)) {
             return Flux.deferContextual(ctx -> {
                 if (!ctx.hasKey("userContext")) {
-                    return Mono.error(new AccessDeniedException("auth.unauthorized"));
+                    return Flux.error(new AccessDeniedException("auth.unauthorized"));
                 }
                 if (!validate(ctx, requireRoles)) {
                     return Flux.error(new ForbiddenException("auth.forbidden"));
