@@ -100,13 +100,13 @@ class MemberControllerTest extends AcceptedTest {
 특정 권한이 필요한 경우 `@RequireRoles` 에 권한 인자를 추가합니다. 타입은 `String[]` 입니다.
 
 ```java
-    @RequireRoles(roles = {Role.ROLES.USER, Role.ROLES.ADMIN})
+    @RequireRoles(roles = {Role.ROLES.USER, Role.ROLES.SELLER, Role.ROLES.ADMIN})
     @GetMapping("/member/{id}")
     public Mono<ReadMemberResponse> readMember(@PathVariable Long id) {
         ...
     }
 ```
-이 경우 로그인 한 사용자의 권한이 `USER` 와 `ADMIN` 둘 중 하나인 경우 허용됩니다.
+이 경우 로그인 한 사용자의 권한이 `USER`, `SELLER` `ADMIN` 셋 중 하나인 경우 허용됩니다.
 
 로그인 한 사용자의 정보를 컨트롤러 인자로 주입 받으려면 아래와 같이 `@LoginUser` 어노테이션을 사용하여 `UserContext` 타입을 주입받습니다.
 
