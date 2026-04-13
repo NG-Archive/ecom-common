@@ -28,7 +28,7 @@ public class WebClientErrorHandler {
     private static RuntimeException mapException(HttpStatusCode status, ErrorResponse body) {
         return switch (status) {
             case HttpStatus httpStatus when httpStatus == HttpStatus.NOT_FOUND ->
-                    new EntityNotFoundException(body.errorCode());
+                    new EntityNotFoundException(body.errorCode(), body.message());
             case HttpStatusCode s when s.is4xxClientError() ->
                     new ExternalService4xxException(body.errorCode(), body.message());
             case HttpStatusCode s when s.is5xxServerError() ->

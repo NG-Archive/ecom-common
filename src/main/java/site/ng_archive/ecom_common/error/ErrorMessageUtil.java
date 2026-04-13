@@ -14,7 +14,6 @@ public class ErrorMessageUtil {
     private static final String EXCEPTION_ERROR_CODE = "error";
 
     private String getErrorCode(Exception e) {
-        System.out.println(e);
         String errorCode = e.getMessage();
         try {
             ms.getMessage(errorCode, null, Locale.KOREA);
@@ -25,7 +24,6 @@ public class ErrorMessageUtil {
     }
 
     private String getErrorMessage(String errorCode) {
-        System.out.println(errorCode);
         try {
             return ms.getMessage(errorCode, null, Locale.KOREA);
         } catch (Exception ex) {
@@ -34,7 +32,6 @@ public class ErrorMessageUtil {
     }
 
     private String getErrorMessage(String errorCode, Object[] args) {
-        System.out.println("errorCode = " + errorCode);
         try {
             return ms.getMessage(errorCode, args, Locale.KOREA);
         } catch (Exception ex) {
