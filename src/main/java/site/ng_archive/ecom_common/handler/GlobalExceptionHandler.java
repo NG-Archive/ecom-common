@@ -3,6 +3,7 @@ package site.ng_archive.ecom_common.handler;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -65,7 +66,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException ex) {
-        if (ex.get_code() != null && ex.get_message() != null) {
+        if (StringUtils.hasText(ex.get_code()) && StringUtils.hasText(ex.get_message())) {
             return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
         }
         return errorMessageUtil.getErrorResult(ex);
