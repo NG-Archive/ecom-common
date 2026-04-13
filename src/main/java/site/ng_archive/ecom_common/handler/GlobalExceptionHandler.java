@@ -65,6 +65,9 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler(EntityNotFoundException.class)
     public ErrorResponse handleEntityNotFoundException(EntityNotFoundException ex) {
+        if (ex.get_code() != null && ex.get_message() != null) {
+            return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
+        }
         return errorMessageUtil.getErrorResult(ex);
     }
 
