@@ -22,8 +22,8 @@ class CommonTest extends AcceptedTest {
 
     @Test
     void 암호화() {
-        String plainText = "secret";
-        String key = "key";
+        String plainText = "ecom-order-mysql-password";
+        String key = "ecom-order-prod";
 
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
@@ -35,8 +35,8 @@ class CommonTest extends AcceptedTest {
 
     @Test
     void 복호화() {
-        String encrypted = "cG4Mmc1OJYAlYbBjumbSSD9xV+RcK9ypOkQ7hhgDgn+4uToZ/KeFYsTNlsUFhTxe";
-        String key = "key";
+        String encrypted = "kL9ZaBsxJ/KBfTjj0WnpVygrmxjVF0iuJ0Y6jfkzQSYlQcKTywtEelhVmHEbZrh/Z5a06OJ4bjTaPVRMLImVwA==";
+        String key = "ecom-order-prod";
 
         StandardPBEStringEncryptor encryptor = new StandardPBEStringEncryptor();
         encryptor.setAlgorithm("PBEWITHHMACSHA512ANDAES_256");
