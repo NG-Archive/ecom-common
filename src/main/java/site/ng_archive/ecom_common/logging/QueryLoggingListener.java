@@ -6,6 +6,7 @@ import io.r2dbc.proxy.core.BoundValue;
 import io.r2dbc.proxy.core.QueryExecutionInfo;
 import io.r2dbc.proxy.core.QueryInfo;
 import io.r2dbc.proxy.listener.ProxyExecutionListener;
+import com.fasterxml.jackson.core.io.JsonStringEncoder;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
@@ -49,10 +50,10 @@ public class QueryLoggingListener implements ProxyExecutionListener {
         String sql = String.join("; ", sqls);
 
         if (execInfo.isSuccess()) {
-            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\"}", millis, sql);
+            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\"}", millis, escapeJson(sql));
         } else {
             String error = truncateError(execInfo.getThrowable());
-            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\",\"error\":\"{}\"}", millis, sql, error);
+            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\",\"error\":\"{}\"}", millis, escapeJson(sql), escapeJson(error));
         }
     }
 
@@ -83,6 +84,11 @@ public class QueryLoggingListener implements ProxyExecutionListener {
         if (msg == null) return t.getClass().getSimpleName();
         int idx = msg.indexOf("; SQL statement:");
         return idx > 0 ? msg.substring(0, idx) : msg;
+    }
+
+    private String escapeJson(String value) {
+        if (value == null) return "null";
+        return new String(JsonStringEncoder.getInstance().quoteAsString(value));
     }
 
     private String toLiteral(BoundValue bv) {
