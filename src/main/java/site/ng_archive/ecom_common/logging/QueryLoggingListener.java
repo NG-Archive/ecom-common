@@ -10,9 +10,21 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-@Slf4j
+@Slf4j(topic = "SQL")
 public class QueryLoggingListener implements ProxyExecutionListener {
+
+    private static final Set<String> SENSITIVE_KEYS = Set.of(
+            "password"
+    );
+
+    private static final Pattern SENSITIVE_COLUMN_PATTERN = Pattern.compile(
+            "(?i)\\b(" + String.join("|", SENSITIVE_KEYS.stream().map(Pattern::quote).toList()) + ")"
+            + "\\s*=\\s*(?:'[^']*'|[^,\\s)]+)"
+    );
 
     @Override
     public void afterQuery(QueryExecutionInfo execInfo) {
@@ -37,23 +49,32 @@ public class QueryLoggingListener implements ProxyExecutionListener {
         String sql = String.join("; ", sqls);
 
         if (execInfo.isSuccess()) {
-            log.trace("{\"sql\":\"{}\",\"duration\":\"{}ms\"}", sql, millis);
+            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\"}", millis, sql);
         } else {
             String error = truncateError(execInfo.getThrowable());
-            log.trace("{\"sql\":\"{}\",\"duration\":\"{}ms\",\"error\":\"{}\"}", sql, millis, error);
+            log.trace("{\"duration\":\"{}ms\",\"sql\":\"{}\",\"error\":\"{}\"}", millis, sql, error);
         }
     }
 
-    // $1, $2... (PostgreSQL 위치 기반) 또는 :name (이름 기반) 치환
     private String substitute(String sql, Bindings bindings) {
         for (Binding b : bindings.getIndexBindings()) {
             int idx = (Integer) b.getKey();
-            sql = sql.replace("$" + (idx + 1), toLiteral(b.getBoundValue()));
+            sql = sql.replaceAll("\\$" + (idx + 1) + "(?!\\d)",
+                    Matcher.quoteReplacement(toLiteral(b.getBoundValue())));
         }
         for (Binding b : bindings.getNamedBindings()) {
-            sql = sql.replace(":" + b.getKey(), toLiteral(b.getBoundValue()));
+            String key = String.valueOf(b.getKey());
+            String literal = isSensitive(key) ? "'***'" : toLiteral(b.getBoundValue());
+            sql = sql.replaceAll(":" + Pattern.quote(key) + "(?!\\w)",
+                    Matcher.quoteReplacement(literal));
         }
-        return sql;
+        return SENSITIVE_COLUMN_PATTERN.matcher(sql)
+                .replaceAll(m -> m.group(1) + " = '***'");
+    }
+
+    private boolean isSensitive(String key) {
+        String lower = key.toLowerCase();
+        return SENSITIVE_KEYS.stream().anyMatch(lower::contains);
     }
 
     private String truncateError(Throwable t) {
@@ -68,7 +89,8 @@ public class QueryLoggingListener implements ProxyExecutionListener {
         if (bv.isNull()) return "NULL";
         Object val = bv.getValue();
         if (val instanceof String || val instanceof Enum<?>) {
-            return "'" + val + "'";
+            String escaped = String.valueOf(val).replace("'", "''");
+            return "'" + escaped + "'";
         }
         return String.valueOf(val);
     }

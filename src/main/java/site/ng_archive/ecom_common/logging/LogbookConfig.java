@@ -19,11 +19,7 @@ public class LogbookConfig {
     @Bean
     @ConditionalOnMissingBean(CorrelationId.class)
     public CorrelationId correlationId() {
-        return request -> {
-            String id = UUID.randomUUID().toString();
-            MDC.put(CORRELATION_ID, id);
-            return id;
-        };
+        return request -> MDC.get(TransactionIdFilter.TRANSACTION_ID);
     }
 
     @Bean

@@ -5,12 +5,12 @@ Configuration:
     Console:
       name: CONSOLE
       PatternLayout:
-        pattern: "%-5level %logger{36} - %notEmpty{[%X{correlationId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
+        pattern: "%-5level %logger{36} - %notEmpty{[%X{transactionId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
 
   Loggers:
     AsyncLogger:
       - name: site.ng_archive
-        level: TRACE
+        level: INFO
         additivity: false
         includeLocation: false
         AppenderRef:

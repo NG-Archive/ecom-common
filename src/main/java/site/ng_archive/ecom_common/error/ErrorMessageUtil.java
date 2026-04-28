@@ -104,8 +104,22 @@ public class ErrorMessageUtil {
 
     private static String escapeJson(String s) {
         if (s == null) return "";
-        return s.replaceAll("[\r\n]+", " ")
-                .replace("\\", "\\\\")
-                .replace("\"", "\\\"");
+        StringBuilder sb = new StringBuilder(s.length());
+        for (char c : s.toCharArray()) {
+            sb.append(escapeJsonChar(c));
+        }
+        return sb.toString();
+    }
+
+    private static String escapeJsonChar(char c) {
+        return switch (c) {
+            case '"' -> "\\\"";
+            case '\\' -> "\\\\";
+            case '\b' -> "\\b";
+            case '\f' -> "\\f";
+            case '\n', '\r' -> " ";
+            case '\t' -> "\\t";
+            default -> c < 0x20 ? String.format("\\u%04x", (int) c) : String.valueOf(c);
+        };
     }
 }
