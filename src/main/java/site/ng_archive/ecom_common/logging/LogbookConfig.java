@@ -27,7 +27,7 @@ public class LogbookConfig {
     }
 
     @Bean
-    @Order(-2)
+    @Order(-1)
     @ConditionalOnMissingBean(LogbookWebFilter.class)
     public LogbookWebFilter logbookWebFilter(Logbook logbook) {
         return new LogbookWebFilter(logbook);

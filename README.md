@@ -167,3 +167,24 @@ token.auth.failed=인증에 실패하였습니다.
 auth.unauthorized=로그인이 필요합니다.
 auth.forbidden=권한이 필요합니다.
 ```
+### 6) logbook 활성화를 위한 applycation.properties 항목 추가
+
+> **참고**: Logbook의 더 많은 설정 옵션은 [Logbook GitHub Repository](https://github.com/zalando/logbook)를 참조하세요.
+
+application.properties
+```properties
+# Logbook 로거의 로그 레벨을 trace로 설정하여 HTTP 요청/응답을 상세히 기록
+logging.level.org.zalando.logbook=trace
+# Logbook의 서블릿 필터를 비활성화 (WebFlux 환경에서는 필요 없음)
+logbook.filter.enabled=false
+# 로그 출력 형식을 JSON으로 설정
+logbook.format.style=json
+# 로그에 기록할 요청/응답 본문의 최대 크기를 10240 바이트(10KB)로 제한
+logbook.write.max-body-size=10240
+# JSON 본문에서 'password' 필드를 난독화하여 로그에 기록
+logbook.obfuscate.json-body-fields[0]=password
+# /actuator/** 경로에 대한 요청은 로그에서 제외
+logbook.predicate.exclude[0].path=/actuator/**
+# HTTP 헤더 중 'Authorization' 헤더를 난독화하여 로그에 기록
+logbook.obfuscate.headers[0]=Authorization
+```
