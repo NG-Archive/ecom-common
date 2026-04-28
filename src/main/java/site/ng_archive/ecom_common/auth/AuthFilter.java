@@ -22,7 +22,7 @@ import java.nio.charset.StandardCharsets;
 
 @Slf4j
 @Component
-@Order(-1)
+@Order(0)
 @RequiredArgsConstructor
 public class AuthFilter implements WebFilter {
 

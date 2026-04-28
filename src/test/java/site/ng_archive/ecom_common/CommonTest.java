@@ -4,10 +4,20 @@ package site.ng_archive.ecom_common;
 import org.assertj.core.api.Assertions;
 import org.jasypt.encryption.pbe.StandardPBEStringEncryptor;
 import org.junit.jupiter.api.Test;
+import org.slf4j.MDC;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.r2dbc.R2dbcAutoConfiguration;
+import org.springframework.boot.autoconfigure.r2dbc.R2dbcTransactionManagerAutoConfiguration;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Schedulers;
+import reactor.test.StepVerifier;
 import site.ng_archive.ecom_common.auth.UserContext;
 import site.ng_archive.ecom_common.auth.token.TokenUtil;
 import site.ng_archive.ecom_common.config.AcceptedTest;
 
+@EnableAutoConfiguration(exclude = {
+    R2dbcAutoConfiguration.class
+})
 class CommonTest extends AcceptedTest {
 
     @Test
