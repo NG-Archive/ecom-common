@@ -21,6 +21,7 @@ public class TransactionIdFilter implements WebFilter {
         String id = UUID.randomUUID().toString();
         MDC.put(TRANSACTION_ID, id);
 
-        return chain.filter(exchange);
+        return chain.filter(exchange)
+            .contextWrite(ctx -> ctx.put(TRANSACTION_ID, id));
     }
 }
