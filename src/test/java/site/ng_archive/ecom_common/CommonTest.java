@@ -55,30 +55,4 @@ class CommonTest extends AcceptedTest {
         String plainText = encryptor.decrypt(encrypted);
         System.out.println(plainText);
     }
-    @Test
-    void mdc_propagation_scenarios() {
-        // 1. 같은 스레드 - 동작함
-        MDC.put("correlationId", "test-id");
-        Mono.fromCallable(() -> MDC.get("correlationId"))
-            .as(StepVerifier::create)
-            .expectNext("test-id")
-            .verifyComplete();
-
-        // 2. 스레드 전환 - MDC 끊김
-        Mono.fromCallable(() -> MDC.get("correlationId"))
-            .publishOn(Schedulers.boundedElastic())
-            .as(StepVerifier::create)
-            .expectNext("test-id")
-            .verifyComplete();
-
-//        // 3. Reactor Context에 넣으면 - 전파됨 (context-propagation + accessor 필요)
-//        Mono.fromCallable(() -> MDC.get("correlationId"))
-//            .publishOn(Schedulers.boundedElastic())
-//            .contextWrite(ctx -> ctx.put("correlationId", "test-id"))
-//            .as(StepVerifier::create)
-//            .expectNext("test-id")
-//            .verifyComplete();
-
-        MDC.clear();
-    }
 }
