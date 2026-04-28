@@ -123,7 +123,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(RuntimeException.class)
     public ErrorResponse handleRuntimeException(RuntimeException ex) {
-        log.error("handleRuntimeException: ", ex);
+        log.error(ex.getMessage());
         String errorCode = "error.runtime";
         return errorMessageUtil.getErrorResult(errorCode);
     }
@@ -131,7 +131,7 @@ public class GlobalExceptionHandler {
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     @ExceptionHandler(Exception.class)
     public ErrorResponse handleGeneralException(Exception ex) {
-        log.error("handleGeneralException: ", ex);
+        log.error(ex.getMessage());
         String errorCode = "error.internal.server";
         return errorMessageUtil.getErrorResult(errorCode);
     }

@@ -1,0 +1,34 @@
+Configuration:
+  status: warn
+
+  Appenders:
+    Console:
+      name: CONSOLE
+      PatternLayout:
+        pattern: "%-5level %logger{36} - %X{correlationId} %replace{%msg %ex{5}}{[\r\n]+}{ }%n"
+
+  Loggers:
+    AsyncLogger:
+      - name: site.ng_archive
+        level: DEBUG
+        additivity: false
+        includeLocation: false
+        AppenderRef:
+          ref: CONSOLE
+      - name: SQL
+        level: DEBUG
+        additivity: false
+        includeLocation: false
+        AppenderRef:
+          ref: CONSOLE
+      - name: org.zalando.logbook
+        level: TRACE
+        additivity: false
+        includeLocation: false
+        AppenderRef:
+          ref: CONSOLE
+    AsyncRoot:
+      level: INFO
+      includeLocation: false
+      AppenderRef:
+        ref: CONSOLE
