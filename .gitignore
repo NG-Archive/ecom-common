@@ -2,3 +2,4 @@
 /.gradle/
 /.idea/
 /src/main/resources/static/apispec.yaml
+/.claude/settings.local.json
