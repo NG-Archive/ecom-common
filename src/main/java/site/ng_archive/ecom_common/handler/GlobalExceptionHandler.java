@@ -21,7 +21,7 @@ import site.ng_archive.ecom_common.webclient.ExternalServiceException;
 
 import java.util.Arrays;
 
-@Slf4j(topic = "GlobalExceptionHandler")
+@Slf4j
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {

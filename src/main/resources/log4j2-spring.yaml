@@ -5,7 +5,7 @@ Configuration:
     Console:
       name: CONSOLE
       PatternLayout:
-        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %notEmpty{[%X{traceId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %50.50logger{50} - %notEmpty{[%X{traceId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
 
   Loggers:
     Logger:
@@ -22,7 +22,7 @@ Configuration:
         includeLocation: false
         AppenderRef:
           ref: CONSOLE
-      - name: QueryLogger
+      - name: site.ng_archive.ecom_common.logging
         level: TRACE
         additivity: false
         includeLocation: false
