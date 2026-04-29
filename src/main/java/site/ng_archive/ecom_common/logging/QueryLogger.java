@@ -15,8 +15,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Slf4j(topic = "SQL")
-public class QueryLoggingListener implements ProxyExecutionListener {
+@Slf4j(topic = "QueryLogger")
+public class QueryLogger implements ProxyExecutionListener {
 
     private static final Set<String> SENSITIVE_KEYS = Set.of(
             "password"

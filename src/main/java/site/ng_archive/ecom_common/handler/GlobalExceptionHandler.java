@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.bind.support.WebExchangeBindException;
+import org.springframework.web.reactive.resource.NoResourceFoundException;
 import org.springframework.web.server.MissingRequestValueException;
 import site.ng_archive.ecom_common.auth.exception.AccessDeniedException;
 import site.ng_archive.ecom_common.auth.exception.ForbiddenException;
@@ -20,7 +21,7 @@ import site.ng_archive.ecom_common.webclient.ExternalServiceException;
 
 import java.util.Arrays;
 
-@Slf4j
+@Slf4j(topic = "GlobalExceptionHandler")
 @RequiredArgsConstructor
 @RestControllerAdvice
 public class GlobalExceptionHandler {
@@ -72,6 +73,13 @@ public class GlobalExceptionHandler {
             return errorMessageUtil.getErrorResult(ex.get_code(), ex.get_message());
         }
         return errorMessageUtil.getErrorResult(ex);
+    }
+
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ErrorResponse handleNoResourceFoundException(NoResourceFoundException ex) {
+        log.error(ErrorMessageUtil.buildErrorJson(ex));
+        return errorMessageUtil.getErrorResult("error.not.found");
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

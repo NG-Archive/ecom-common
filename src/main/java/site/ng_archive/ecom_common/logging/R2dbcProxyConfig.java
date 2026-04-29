@@ -30,7 +30,7 @@ public class R2dbcProxyConfig {
             if (bean instanceof ConnectionFactory cf
                     && registered.compareAndSet(false, true)) {
                 return ProxyConnectionFactory.builder(cf)
-                        .listener(new QueryLoggingListener())
+                        .listener(new QueryLogger())
                         .build();
             }
             return bean;
