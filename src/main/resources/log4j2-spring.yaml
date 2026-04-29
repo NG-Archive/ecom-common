@@ -5,23 +5,24 @@ Configuration:
     Console:
       name: CONSOLE
       PatternLayout:
-        pattern: "%-5level %logger{36} - %notEmpty{[%X{transactionId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
+        pattern: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level %logger{36} - %notEmpty{[%X{traceId}] : }%replace{%replace{%msg %ex}{\"correlation\":\"[^\"]*\",}{}}{[\r\n]+}{ }%n"
 
   Loggers:
+    Logger:
     AsyncLogger:
+      - name: org.zalando.logbook
+        level: TRACE
+        additivity: false
+        includeLocation: false
+        AppenderRef:
+          ref: CONSOLE
       - name: site.ng_archive
         level: INFO
         additivity: false
         includeLocation: false
         AppenderRef:
           ref: CONSOLE
-      - name: SQL
-        level: TRACE
-        additivity: false
-        includeLocation: false
-        AppenderRef:
-          ref: CONSOLE
-      - name: org.zalando.logbook
+      - name: QueryLogger
         level: TRACE
         additivity: false
         includeLocation: false
