@@ -9,6 +9,7 @@
 - JWT 토큰 처리
 - 비밀번호 해시 처리
 - 공통 예외 및 에러 처리
+- 서비스/r2dbc 로깅 처리
 - AOP 기반 공통 기능 지원
 - 테스트 공통 설정 및 테스트 픽스처
 - REST Docs / API 스펙 문서화 보조
@@ -148,55 +149,7 @@ token.jwt.secret=ENC(RFTbdDKIF/+kFhFZ2sKkwiC586suCuty6dZVKzggKtzQPwR6k02q6jFUKPQ
 
 `token.jwt.secret`는 암호화 값을 생성하기 위하여 [CommonTest.java](src/test/java/site/ng_archive/ecom_common/CommonTest.java) 의 암호화 함수를 이용하세요.
 
-### 5) message.properties 에 아래 항목 추가
-common 모듈 에서 사용하는 오류 메시지 생성을 위하여 `message.properties` 에 아래 항목이 필수로 포함되어야 합니다. 
-
-message.properties
-```properties
-error=오류가 발생했습니다.
-error.runtime=실행 중 오류가 발생했습니다.
-error.internal.server=서버 내부 오류가 발생했습니다. 잠시 후 다시 시도해주세요.
-error.input.unknown=입력값 오류가 발생했습니다.
-error.unsupported.operation=해당 기능은 현재 지원되지 않습니다.
-error.response.empty=응답 내용이 비어 있습니다.
-error.response.invalid=응답 내용이 올바른 형식이 아닙니다.
-error.missing.request=필수 {0} ''{1}''이(가) 누락되었습니다.
-token.expired=토큰이 만료되었습니다.
-token.invalid=토큰이 올바르지 않습니다.
-token.auth.failed=인증에 실패하였습니다.
-auth.unauthorized=로그인이 필요합니다.
-auth.forbidden=권한이 필요합니다.
-```
-### 6) logbook 활성화를 위한 applycation.properties 항목 추가
-
-> **참고**: Logbook의 더 많은 설정 옵션은 [Logbook GitHub Repository](https://github.com/zalando/logbook)를 참조하세요.
-
-application.properties
-```properties
-# SQL 쿼리 로그 레벨을 trace로 설정하여 SQL 실행 로그를 상세히 기록
-logging.level.sql=trace
-# Logbook 로거의 로그 레벨을 trace로 설정하여 HTTP 요청/응답을 상세히 기록
-logging.level.org.zalando.logbook=trace
-# Logbook의 서블릿 필터를 비활성화 (WebFlux 환경에서는 필요 없음)
-logbook.filter.enabled=false
-# 로그 출력 형식을 JSON으로 설정
-logbook.format.style=json
-# 로그에 기록할 요청/응답 본문의 최대 크기를 10240 바이트(10KB)로 제한
-logbook.write.max-body-size=10240
-# JSON 본문에서 'password' 필드를 난독화하여 로그에 기록
-logbook.obfuscate.json-body-fields[0]=password
-# /actuator/** 경로에 대한 요청은 로그에서 제외
-logbook.predicate.exclude[0].path=/actuator/**
-# /swagger-ui/** 경로에 대한 요청은 로그에서 제외
-logbook.predicate.exclude[1].path=/swagger-ui/**
-# /apispec* 경로에 대한 요청은 로그에서 제외
-logbook.predicate.exclude[2].path=/apispec*
-# /v3/api-docs/* 경로에 대한 요청은 로그에서 제외
-logbook.predicate.exclude[3].path=/v3/api-docs/*
-# HTTP 헤더 중 'Authorization' 헤더를 난독화하여 로그에 기록
-logbook.obfuscate.headers[0]=Authorization
-```
-### 6) logbook 활성화를 위한 applycation.properties 항목 추가
+### 5) logbook 활성화를 위한 applycation.properties 항목 추가
 
 > **참고**: Logbook의 더 많은 설정 옵션은 [Logbook GitHub Repository](https://github.com/zalando/logbook)를 참조하세요.
 
@@ -222,4 +175,15 @@ logbook.predicate.exclude[3].path=/v3/api-docs/*
 logbook.predicate.exclude[4].path=/favicon.ico
 #HTTP 헤더 중 'Authorization' 헤더를 난독화하여 로그에 기록
 logbook.obfuscate.headers[0]=Authorization
+```
+
+### 6) spring-start 기본 로거 의존성 제거
+```gradle
+configurations.all {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-logging'
+}
+
+dependencies {
+    ...
+}
 ```
